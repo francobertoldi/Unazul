@@ -1,0 +1,35 @@
+# IDE / Editor
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.swp
+
+# .NET
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+# Node / Frontend
+node_modules/
+dist/
+.env
+.env.local
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Claude Code
+.claude/
+
+# Embedded repos (managed independently)
+Frontend/
+Sandinas.Assets/
+
+# Docker volumes (data is ephemeral in dev)
+pgdata/
