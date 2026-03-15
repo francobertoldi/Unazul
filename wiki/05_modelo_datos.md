@@ -56,6 +56,7 @@ erDiagram
         uuid tenant_id FK
         string name UK
         string description
+        boolean is_system "default false - protege roles predefinidos"
         timestamp created_at
         timestamp updated_at
         uuid created_by
@@ -156,6 +157,7 @@ erDiagram
     entity_channels {
         uuid id PK
         uuid entity_id FK
+        uuid tenant_id FK "hereda de entities; necesario para RLS directo"
         channel_type channel "web | mobile | api | presencial | ia_agent"
     }
 
@@ -303,6 +305,8 @@ erDiagram
         integer grace_period_days "nullable"
         timestamp created_at
         timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     product_requirements {
@@ -340,7 +344,7 @@ erDiagram
     product_plans ||--o| plan_card_attributes : "TARJETA"
     product_plans ||--o| plan_investment_attributes : "INV"
     product_plans ||--o{ coverages : "incluye"
-    commission_plans ||--o| product_plans : "aplica a"
+    commission_plans ||--o{ product_plans : "aplica a"
 ```
 
 **Atributos por categoria (tabla 1:1 segun prefijo de familia):**
@@ -407,20 +411,28 @@ erDiagram
         string occupation "nullable"
         timestamp created_at
         timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     applicant_contacts {
         uuid id PK
         uuid applicant_id FK
+        uuid tenant_id FK "hereda de applicants; necesario para RLS directo"
         contact_type type "personal | work | emergency | other"
         string email "nullable"
         string phone_code "nullable"
         string phone "nullable"
+        timestamp created_at
+        timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     applicant_addresses {
         uuid id PK
         uuid applicant_id FK
+        uuid tenant_id FK "hereda de applicants; necesario para RLS directo"
         address_type type "home | work | legal | other"
         string street
         string number
@@ -431,31 +443,44 @@ erDiagram
         string postal_code
         decimal latitude "nullable"
         decimal longitude "nullable"
+        timestamp created_at
+        timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     beneficiaries {
         uuid id PK
         uuid application_id FK
+        uuid tenant_id FK "hereda de applications; necesario para RLS directo"
         string first_name
         string last_name
         string relationship
         decimal percentage
+        timestamp created_at
+        timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     application_documents {
         uuid id PK
         uuid application_id FK
+        uuid tenant_id FK "hereda de applications; necesario para RLS directo"
         string name
         string document_type
         string file_url
         document_status status "pending | approved | rejected"
-        timestamp uploaded_at
-        uuid uploaded_by
+        timestamp created_at
+        timestamp updated_at
+        uuid created_by
+        uuid updated_by
     }
 
     application_observations {
         uuid id PK
         uuid application_id FK
+        observation_type observation_type "manual | message — default manual"
         text content
         uuid user_id
         string user_name "denormalizado"
@@ -521,7 +546,7 @@ erDiagram
     applications ||--o{ settlement_items : "liquidada en"
 ```
 
-**RLS:** aplica a `applications`, `applicants`, `settlements`, `settlement_items`. Las tablas hijas heredan filtro via JOIN con `applications.tenant_id`.
+**RLS:** aplica a `applications`, `applicants`, `applicant_contacts`, `applicant_addresses`, `beneficiaries`, `application_documents`, `settlements`, `settlement_items`. Todas las tablas hijas incluyen `tenant_id` propio para RLS directo.
 
 **Indices clave:**
 - `applicants(tenant_id, document_type, document_number)` UNIQUE
@@ -570,6 +595,7 @@ erDiagram
     parameter_options {
         uuid id PK
         uuid parameter_id FK
+        uuid tenant_id FK "hereda de parameters; necesario para RLS directo"
         string option_value
         string option_label
         integer sort_order
@@ -617,6 +643,7 @@ erDiagram
     workflow_states {
         uuid id PK
         uuid workflow_id FK
+        uuid tenant_id FK "hereda de workflow_definitions; necesario para RLS directo"
         string name
         string label
         flow_node_type type "start | end | service_call | decision | send_message | data_capture | timer"
@@ -627,6 +654,7 @@ erDiagram
     workflow_state_configs {
         uuid id PK
         uuid state_id FK
+        uuid tenant_id FK "hereda de workflow_states; necesario para RLS directo"
         string key "ej: service_id, endpoint, method, condition, channel, template_id, timer_minutes"
         string value
     }
@@ -634,6 +662,7 @@ erDiagram
     workflow_state_fields {
         uuid id PK
         uuid state_id FK "solo para nodos data_capture"
+        uuid tenant_id FK "hereda de workflow_states; necesario para RLS directo"
         string field_name
         string field_type "text | number | boolean | date | select"
         boolean is_required
@@ -643,6 +672,7 @@ erDiagram
     workflow_transitions {
         uuid id PK
         uuid workflow_id FK
+        uuid tenant_id FK "hereda de workflow_definitions; necesario para RLS directo"
         uuid from_state_id FK
         uuid to_state_id FK
         string label "nullable"
@@ -654,10 +684,13 @@ erDiagram
         uuid id PK
         uuid tenant_id FK
         string title
+        string subject "nullable - asunto para email, con variables {{variable}}"
         string format "text | html"
         text content "con variables {{variable}}"
         string channel "email | sms | whatsapp"
+        timestamp created_at
         timestamp updated_at
+        uuid created_by
         uuid updated_by
     }
 
@@ -774,6 +807,7 @@ Cada servicio define sus propios enums en su esquema. Los valores se sincronizan
 | `document_type` | DNI, CUIT, passport | SA.operations |
 | `gender` | male, female, other, not_specified | SA.operations |
 | `document_status` | pending, approved, rejected | SA.operations |
+| `observation_type` | manual, message | SA.operations |
 | `commission_value_type` | fixed_per_sale, percentage_capital, percentage_total_loan | SA.catalog |
 | `service_type` | rest_api, mcp, graphql, soap, webhook | SA.config |
 | `auth_type` | none, api_key, bearer_token, basic_auth, oauth2, custom_header | SA.config |

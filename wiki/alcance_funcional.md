@@ -92,7 +92,7 @@ graph LR
 
 ### 5.3 Operaciones
 - Solicitudes con ciclo de vida (draft > pending > in_review > approved/rejected > settled/cancelled).
-- Detalle en 7 solapas: solicitante, producto, domicilio, beneficiarios, documentos, observaciones, trazabilidad.
+- Detalle en 8 solapas: solicitante, producto, contactos, direcciones, beneficiarios, documentos, observaciones, trazabilidad.
 - Liquidacion masiva de comisiones con preliquidacion, confirmacion y exportacion Excel.
 - Historial de liquidaciones con descarga de reportes.
 - Envio de mensajes (Email/SMS/WhatsApp) desde la solicitud.
