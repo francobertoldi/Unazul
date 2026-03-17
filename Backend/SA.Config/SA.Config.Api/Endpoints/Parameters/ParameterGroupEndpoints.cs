@@ -3,7 +3,6 @@ using SA.Config.Api.Mappers.Parameters;
 using SA.Config.Api.ViewModels.Parameters;
 using SA.Config.Application.Commands.Parameters;
 using SA.Config.Application.Queries.Parameters;
-using Shared.Contract.Models;
 
 namespace SA.Config.Api.Endpoints.Parameters;
 
@@ -21,7 +20,6 @@ public static class ParameterGroupEndpoints
             IMediator mediator) =>
         {
             var result = await mediator.Send(new ListParameterGroupsQuery());
-
             return Results.Ok(ParameterMapper.ToCategoryResponses(result));
         })
         .Produces<IReadOnlyList<CategoryResponse>>(200);
@@ -31,53 +29,26 @@ public static class ParameterGroupEndpoints
             CreateParameterGroupRequest request,
             IMediator mediator) =>
         {
-            try
-            {
-                var result = await mediator.Send(new CreateParameterGroupCommand(
-                    request.Code,
-                    request.Name,
-                    request.Category,
-                    request.Icon,
-                    request.SortOrder));
+            var result = await mediator.Send(new CreateParameterGroupCommand(
+                request.Code,
+                request.Name,
+                request.Category,
+                request.Icon,
+                request.SortOrder));
 
-                return Results.Created($"/api/v1/parameter-groups/{result.Id}",
-                    ParameterMapper.ToParameterGroupResponse(result));
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "CFG_DUPLICATE_GROUP_CODE")
-            {
-                return Results.Json(
-                    new ErrorResponse("El codigo de grupo ya existe.", "CFG_DUPLICATE_GROUP_CODE"),
-                    statusCode: 409);
-            }
+            return Results.Created($"/api/v1/parameter-groups/{result.Id}",
+                ParameterMapper.ToParameterGroupResponse(result));
         })
-        .Produces<ParameterGroupResponse>(201)
-        .Produces<ErrorResponse>(409);
+        .Produces<ParameterGroupResponse>(201);
 
         // RF-CFG-06: Delete parameter group
         group.MapDelete("/{id:guid}", async (
             Guid id,
             IMediator mediator) =>
         {
-            try
-            {
-                await mediator.Send(new DeleteParameterGroupCommand(id));
-                return Results.NoContent();
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "CFG_GROUP_NOT_FOUND")
-            {
-                return Results.Json(
-                    new ErrorResponse("Grupo de parametros no encontrado.", "CFG_GROUP_NOT_FOUND"),
-                    statusCode: 404);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "CFG_GROUP_HAS_PARAMETERS")
-            {
-                return Results.Json(
-                    new ErrorResponse("El grupo tiene parametros asociados y no puede eliminarse.", "CFG_GROUP_HAS_PARAMETERS"),
-                    statusCode: 409);
-            }
+            await mediator.Send(new DeleteParameterGroupCommand(id));
+            return Results.NoContent();
         })
-        .Produces(204)
-        .Produces<ErrorResponse>(404)
-        .Produces<ErrorResponse>(409);
+        .Produces(204);
     }
 }
