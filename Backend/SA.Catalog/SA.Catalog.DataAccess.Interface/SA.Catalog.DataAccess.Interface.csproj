@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Catalog.DataAccess.Interface</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Catalog.Domain\SA.Catalog.Domain.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,4 +1,11 @@
+
 Host: localhost
 Puerto: 5432
 Usuario: unazul_admin
 Password: unazul_dev_2026
+
+ELASTIC SEARCH
+Puerto HTTP: localhost:9200
+Puerto transport: localhost:9300
+Modo: single-node, security deshabilitada (desarrollo local)
+Memoria: 512MB heap

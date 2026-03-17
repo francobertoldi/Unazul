@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <PackageReference Include="Yarp.ReverseProxy" Version="$(YarpVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(EfCoreVersion)" />
+    <PackageReference Include="Correlate.AspNetCore" Version="$(CorrelateVersion)" />
+    <PackageReference Include="AspNetCore.HealthChecks.Uris" Version="8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.Auth\Shared.Auth.csproj" />
+  </ItemGroup>
+</Project>

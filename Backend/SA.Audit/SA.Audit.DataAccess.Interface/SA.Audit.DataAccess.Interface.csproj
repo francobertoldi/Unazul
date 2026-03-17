@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Audit.DataAccess.Interface</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Audit.Domain\SA.Audit.Domain.csproj" />
+  </ItemGroup>
+</Project>

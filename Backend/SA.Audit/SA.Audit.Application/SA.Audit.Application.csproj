@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Audit.Application</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Mediator.Abstractions" Version="$(MediatRVersion)" />
+    <PackageReference Include="Mediator.SourceGenerator" Version="$(MediatRVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Audit.Domain\SA.Audit.Domain.csproj" />
+    <ProjectReference Include="..\SA.Audit.DataAccess.Interface\SA.Audit.DataAccess.Interface.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Contract\Shared.Contract.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Pagination\Shared.Pagination.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Export\Shared.Export.csproj" />
+  </ItemGroup>
+</Project>

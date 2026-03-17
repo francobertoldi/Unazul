@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Centralized package versions -->
+    <MassTransitVersion>8.0.6</MassTransitVersion>
+    <MediatRVersion>3.0.1</MediatRVersion>
+    <MapperlyVersion>3.6.0</MapperlyVersion>
+    <EfCoreVersion>9.0.3</EfCoreVersion>
+    <NpgsqlEfCoreVersion>9.0.4</NpgsqlEfCoreVersion>
+    <CorrelateVersion>6.0.0</CorrelateVersion>
+    <ScalarVersion>2.12.24</ScalarVersion>
+    <OpenTelemetryVersion>1.15.0</OpenTelemetryVersion>
+    <ClosedXmlVersion>0.104.2</ClosedXmlVersion>
+    <xUnitVersion>2.9.3</xUnitVersion>
+    <NSubstituteVersion>5.3.0</NSubstituteVersion>
+    <FluentAssertionsVersion>8.0.1</FluentAssertionsVersion>
+    <TestContainersVersion>4.4.0</TestContainersVersion>
+    <PollyVersion>8.5.2</PollyVersion>
+    <SerilogVersion>4.2.0</SerilogVersion>
+    <BcryptVersion>4.0.3</BcryptVersion>
+    <YarpVersion>2.3.0</YarpVersion>
+  </PropertyGroup>
+</Project>

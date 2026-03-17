@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Config.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NSubstitute" Version="$(NSubstituteVersion)" />
+    <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(EfCoreVersion)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(EfCoreVersion)" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="$(TestContainersVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Config.Api\SA.Config.Api.csproj" />
+    <ProjectReference Include="..\SA.Config.Application\SA.Config.Application.csproj" />
+    <ProjectReference Include="..\SA.Config.Domain\SA.Config.Domain.csproj" />
+    <ProjectReference Include="..\SA.Config.DataAccess.EntityFramework\SA.Config.DataAccess.EntityFramework.csproj" />
+  </ItemGroup>
+</Project>

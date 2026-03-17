@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Audit.DataAccess.EntityFramework</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="$(NpgsqlEfCoreVersion)" />
+    <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Audit.Domain\SA.Audit.Domain.csproj" />
+    <ProjectReference Include="..\SA.Audit.DataAccess.Interface\SA.Audit.DataAccess.Interface.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>SA.Identity.DataAccess.Interface</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SA.Identity.Domain\SA.Identity.Domain.csproj" />
+  </ItemGroup>
+</Project>
