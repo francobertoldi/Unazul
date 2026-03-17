@@ -52,41 +52,32 @@ public static class ApplicationEndpoints
             IApplicantRepository applicantRepository,
             ICurrentUser currentUser) =>
         {
-            try
-            {
-                var applicant = await applicantRepository.GetByIdAsync(request.ApplicantId);
-                if (applicant is null)
-                    return Results.Json(
-                        new ErrorResponse("Solicitante no encontrado.", "OPS_APPLICANT_NOT_FOUND"),
-                        statusCode: 404);
-
-                var seq = await repository.GetNextSequenceAsync(currentUser.TenantId);
-                var code = $"OPS-{seq:D6}";
-
-                var application = DomainApplication.Create(
-                    currentUser.TenantId,
-                    request.EntityId,
-                    request.ApplicantId,
-                    code,
-                    request.ProductId,
-                    request.PlanId,
-                    string.Empty, // Will be populated by catalog validation in Application layer
-                    string.Empty,
-                    currentUser.UserId);
-
-                await repository.AddAsync(application);
-                await repository.SaveChangesAsync();
-
-                return Results.Created(
-                    $"/api/v1/applications/{application.Id}",
-                    ApplicationMapper.ToDetailResponse(application));
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "OPS_APPLICANT_NOT_FOUND")
-            {
+            var applicant = await applicantRepository.GetByIdAsync(request.ApplicantId);
+            if (applicant is null)
                 return Results.Json(
                     new ErrorResponse("Solicitante no encontrado.", "OPS_APPLICANT_NOT_FOUND"),
                     statusCode: 404);
-            }
+
+            var seq = await repository.GetNextSequenceAsync(currentUser.TenantId);
+            var code = $"OPS-{seq:D6}";
+
+            var application = DomainApplication.Create(
+                currentUser.TenantId,
+                request.EntityId,
+                request.ApplicantId,
+                code,
+                request.ProductId,
+                request.PlanId,
+                string.Empty, // Will be populated by catalog validation in Application layer
+                string.Empty,
+                currentUser.UserId);
+
+            await repository.AddAsync(application);
+            await repository.SaveChangesAsync();
+
+            return Results.Created(
+                $"/api/v1/applications/{application.Id}",
+                ApplicationMapper.ToDetailResponse(application));
         })
         .Produces<ApplicationDetailResponse>(201)
         .Produces<ErrorResponse>(404);
@@ -98,38 +89,29 @@ public static class ApplicationEndpoints
             IApplicationRepository repository,
             ICurrentUser currentUser) =>
         {
-            try
-            {
-                var application = await repository.GetByIdAsync(id);
-                if (application is null)
-                    return Results.Json(
-                        new ErrorResponse("Solicitud no encontrada.", "OPS_APPLICATION_NOT_FOUND"),
-                        statusCode: 404);
-
-                if (application.Status != ApplicationStatus.Draft)
-                    return Results.Json(
-                        new ErrorResponse("Solo se pueden editar solicitudes en borrador.", "OPS_NOT_DRAFT"),
-                        statusCode: 422);
-
-                application.UpdateDraft(
-                    request.EntityId,
-                    request.ProductId,
-                    request.PlanId,
-                    null,
-                    null,
-                    currentUser.UserId);
-
-                repository.Update(application);
-                await repository.SaveChangesAsync();
-
-                return Results.Ok(ApplicationMapper.ToDetailResponse(application));
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "OPS_APPLICATION_NOT_FOUND")
-            {
+            var application = await repository.GetByIdAsync(id);
+            if (application is null)
                 return Results.Json(
                     new ErrorResponse("Solicitud no encontrada.", "OPS_APPLICATION_NOT_FOUND"),
                     statusCode: 404);
-            }
+
+            if (application.Status != ApplicationStatus.Draft)
+                return Results.Json(
+                    new ErrorResponse("Solo se pueden editar solicitudes en borrador.", "OPS_NOT_DRAFT"),
+                    statusCode: 422);
+
+            application.UpdateDraft(
+                request.EntityId,
+                request.ProductId,
+                request.PlanId,
+                null,
+                null,
+                currentUser.UserId);
+
+            repository.Update(application);
+            await repository.SaveChangesAsync();
+
+            return Results.Ok(ApplicationMapper.ToDetailResponse(application));
         })
         .Produces<ApplicationDetailResponse>(200)
         .Produces<ErrorResponse>(404)

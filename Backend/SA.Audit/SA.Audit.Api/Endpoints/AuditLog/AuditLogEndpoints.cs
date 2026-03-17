@@ -2,7 +2,7 @@ using Mediator;
 using SA.Audit.Api.Mappers.AuditLog;
 using SA.Audit.Api.ViewModels.AuditLog;
 using SA.Audit.Application.Queries;
-using Shared.Contract.Models;
+using Shared.Contract.Exceptions;
 
 namespace SA.Audit.Api.Endpoints.AuditLog;
 
@@ -29,41 +29,25 @@ public static class AuditLogEndpoints
             HttpContext httpContext,
             IMediator mediator) =>
         {
-            try
-            {
-                var tenantId = Guid.Parse(
-                    httpContext.User.FindFirst("tenant_id")?.Value
-                    ?? throw new InvalidOperationException("AUD_INVALID_OPERATION"));
+            var tenantId = Guid.Parse(
+                httpContext.User.FindFirst("tenant_id")?.Value
+                ?? throw new ValidationException("AUD_INVALID_OPERATION", "Tipo de operacion invalido."));
 
-                var result = await mediator.Send(new ListAuditLogQuery(
-                    tenantId,
-                    page ?? 1,
-                    size ?? 20,
-                    user_id,
-                    operation,
-                    module,
-                    from,
-                    to,
-                    sort ?? "occurred_at",
-                    order ?? "desc"));
+            var result = await mediator.Send(new ListAuditLogQuery(
+                tenantId,
+                page ?? 1,
+                size ?? 20,
+                user_id,
+                operation,
+                module,
+                from,
+                to,
+                sort ?? "occurred_at",
+                order ?? "desc"));
 
-                return Results.Ok(AuditMapper.ToAuditLogListResponse(result));
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_INVALID_OPERATION")
-            {
-                return Results.Json(
-                    new ErrorResponse("Operacion invalida.", "AUD_INVALID_OPERATION"),
-                    statusCode: 422);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_INVALID_DATE_RANGE")
-            {
-                return Results.Json(
-                    new ErrorResponse("Rango de fechas invalido.", "AUD_INVALID_DATE_RANGE"),
-                    statusCode: 422);
-            }
+            return Results.Ok(AuditMapper.ToAuditLogListResponse(result));
         })
-        .Produces<AuditLogListResponse>(200)
-        .Produces<ErrorResponse>(422);
+        .Produces<AuditLogListResponse>(200);
 
         // Export audit log entries
         group.MapGet("/export", async (
@@ -76,49 +60,21 @@ public static class AuditLogEndpoints
             HttpContext httpContext,
             IMediator mediator) =>
         {
-            try
-            {
-                var tenantId = Guid.Parse(
-                    httpContext.User.FindFirst("tenant_id")?.Value
-                    ?? throw new InvalidOperationException("AUD_INVALID_OPERATION"));
+            var tenantId = Guid.Parse(
+                httpContext.User.FindFirst("tenant_id")?.Value
+                ?? throw new ValidationException("AUD_INVALID_OPERATION", "Tipo de operacion invalido."));
 
-                var result = await mediator.Send(new ExportAuditLogQuery(
-                    tenantId,
-                    format,
-                    user_id,
-                    operation,
-                    module,
-                    from,
-                    to));
+            var result = await mediator.Send(new ExportAuditLogQuery(
+                tenantId,
+                format,
+                user_id,
+                operation,
+                module,
+                from,
+                to));
 
-                return Results.File(result.Data, result.ContentType, result.FileName);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_INVALID_FORMAT")
-            {
-                return Results.Json(
-                    new ErrorResponse("Formato de exportacion invalido.", "AUD_INVALID_FORMAT"),
-                    statusCode: 422);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_INVALID_DATE_RANGE")
-            {
-                return Results.Json(
-                    new ErrorResponse("Rango de fechas invalido.", "AUD_INVALID_DATE_RANGE"),
-                    statusCode: 422);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_EXPORT_LIMIT_EXCEEDED")
-            {
-                return Results.Json(
-                    new ErrorResponse("Limite de exportacion excedido.", "AUD_EXPORT_LIMIT_EXCEEDED"),
-                    statusCode: 422);
-            }
-            catch (InvalidOperationException ex) when (ex.Message == "AUD_INVALID_OPERATION")
-            {
-                return Results.Json(
-                    new ErrorResponse("Operacion invalida.", "AUD_INVALID_OPERATION"),
-                    statusCode: 422);
-            }
+            return Results.File(result.Data, result.ContentType, result.FileName);
         })
-        .Produces<byte[]>(200)
-        .Produces<ErrorResponse>(422);
+        .Produces<byte[]>(200);
     }
 }

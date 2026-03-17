@@ -18,7 +18,8 @@ public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Ex
         {
             context.Response.StatusCode = ex.HttpStatusCode;
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsJsonAsync(new ErrorResponse(ex.Message, ex.Code));
+            object? details = ex.GetType().GetProperty("Errors")?.GetValue(ex);
+            await context.Response.WriteAsJsonAsync(new ErrorResponse(ex.Message, ex.Code, details));
         }
         catch (Exception ex)
         {
