@@ -28,7 +28,6 @@ Desktop.ini
 .claude/
 
 # Embedded repos (managed independently)
-Frontend/
 Sandinas.Assets/
 
 # Docker volumes (data is ephemeral in dev)
