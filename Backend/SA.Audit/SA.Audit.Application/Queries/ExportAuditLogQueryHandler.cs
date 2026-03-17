@@ -2,6 +2,7 @@ using Mediator;
 using SA.Audit.Application.Dtos;
 using SA.Audit.DataAccess.Interface.Repositories;
 using SA.Audit.Domain;
+using Shared.Contract.Exceptions;
 using Shared.Export;
 
 namespace SA.Audit.Application.Queries;
@@ -27,20 +28,20 @@ public sealed class ExportAuditLogQueryHandler(
     {
         var format = query.Format?.ToLowerInvariant();
         if (format is not "xlsx" and not "csv")
-            throw new InvalidOperationException("AUD_INVALID_FORMAT");
+            throw new ValidationException("AUD_INVALID_FORMAT", "Formato de exportacion invalido. Use 'xlsx' o 'csv'.");
 
         if (query.Operation is not null && !AuditOperationType.IsValid(query.Operation))
-            throw new InvalidOperationException("AUD_INVALID_OPERATION");
+            throw new ValidationException("AUD_INVALID_OPERATION", "Tipo de operacion invalido.");
 
         if (query.From.HasValue && query.To.HasValue && query.From.Value > query.To.Value)
-            throw new InvalidOperationException("AUD_INVALID_DATE_RANGE");
+            throw new ValidationException("AUD_INVALID_DATE_RANGE", "Rango de fechas invalido.");
 
         var count = await repository.CountAsync(
             query.TenantId, query.UserId, query.Operation,
             query.Module, query.From, query.To, ct);
 
         if (count > 10_000)
-            throw new InvalidOperationException("AUD_EXPORT_LIMIT_EXCEEDED");
+            throw new ValidationException("AUD_EXPORT_LIMIT_EXCEEDED", "El limite de exportacion ha sido excedido (maximo 10.000 registros).");
 
         var items = await repository.ListForExportAsync(
             query.TenantId, query.UserId, query.Operation,

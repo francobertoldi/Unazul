@@ -22,6 +22,7 @@ public sealed class IngestDomainEventCommandHandler(
 
         if (!AuditOperationType.IsValid(command.Operation))
             throw new InvalidOperationException("AUD_INVALID_OPERATION");
+            throw new ValidationException("AUD_INVALID_OPERATION", "Tipo de operacion invalido.");
 
         if (string.IsNullOrWhiteSpace(command.Module))
             throw new ValidationException("AUD_MISSING_REQUIRED_FIELDS", "Faltan campos obligatorios en el evento.");
@@ -34,6 +35,7 @@ public sealed class IngestDomainEventCommandHandler(
 
         if (command.OccurredAt > DateTimeOffset.UtcNow.AddMinutes(5))
             throw new InvalidOperationException("AUD_INVALID_OCCURRED_AT");
+            throw new ValidationException("AUD_INVALID_OCCURRED_AT", "La fecha del evento no puede ser futura.");
 
         var auditLog = AuditLog.Create(
             command.TenantId,
