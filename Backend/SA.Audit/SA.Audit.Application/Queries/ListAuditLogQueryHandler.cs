@@ -2,6 +2,7 @@ using Mediator;
 using SA.Audit.Application.Dtos;
 using SA.Audit.DataAccess.Interface.Repositories;
 using SA.Audit.Domain;
+using Shared.Contract.Exceptions;
 using Shared.Pagination;
 
 namespace SA.Audit.Application.Queries;
@@ -12,10 +13,10 @@ public sealed class ListAuditLogQueryHandler(
     public async ValueTask<PagedResult<AuditLogDto>> Handle(ListAuditLogQuery query, CancellationToken ct)
     {
         if (query.Operation is not null && !AuditOperationType.IsValid(query.Operation))
-            throw new InvalidOperationException("AUD_INVALID_OPERATION");
+            throw new ValidationException("AUD_INVALID_OPERATION", "Tipo de operacion invalido.");
 
         if (query.From.HasValue && query.To.HasValue && query.From.Value > query.To.Value)
-            throw new InvalidOperationException("AUD_INVALID_DATE_RANGE");
+            throw new ValidationException("AUD_INVALID_DATE_RANGE", "Rango de fechas invalido.");
 
         var page = Math.Max(1, query.Page);
         var pageSize = Math.Clamp(query.PageSize, 1, 100);
